@@ -6,12 +6,21 @@ PLUGIN.Author = "Xevoxe"
 function PLUGIN:Init()
   
   print("Loading Player Utility Realism++ Version 3.0")
-  if( not api.Exists( "PlayerMeta" )) then print("PlayerData Utility needs PlayerMeta")
-  end
-  Player = plugins.Find("PlayerMeta")
-  
-   local b , res = config.Read("playerdata")
+
+    if not Player then
+        Player = cs.findplugin("PlayerMeta")
+        if not Player then
+          print("PlayerData Utility needs PlayerMeta")
+          return false
+        end
+      end
+
+   local b , res = config.Read("playerData")
   self.Config = res or {}
+  if( not b ) then 
+   -- self:LoadDefaultConfig()
+   if ( res ) then config.Save("playerData") end
+ end
  
  --self.saveTimer = timer.Repeat( 600 , function() self:SaveServer() end )
 end
@@ -22,29 +31,26 @@ end
 function PLUGIN:OnUserConnect(netuser)
   local userID = rust.GetUserID(netuser)
   --Check if player table already exists
-  if(config[userID]) then
+  if(self.Config[userID]) then
+    print("Load player")
     --exists
     --Set Player as a metatable to data
-    config[userID] = Player:Create(config[userID])
+    local loadplayer = self.Config[userID]
+    setmetatable(loadplayer , Player:New())
+    self.Config[userID] = loadplayer
 else
   --does not exist
   --create new data and set player as a metatable
-  local newplayer = { true , true , true , true , true , true }
-  newplayer = Player:Create(newplayer)
-  
+  local newplayer = {}
+  setmetatable(newplayer , Player:New())
   newplayer.Name = netuser.displayName
-  
-  local creation = System.DateTime.Now:ToString("M/dd/yyyy")
-  newplayer.Creation = creation
-  local date = System.DateTime.Now:ToString("M/dd/yyyy")
-  local time = System.DateTime.Now:ToString("hhmm")
-  newplayer.LastLogin = date.." "..time 
-  local timePlayed = util.GetTime()
-  newplayer.TimePlayerd = timePlayed
+  newplayer.Creation = System.DateTime.Now:ToString("M/dd/yyyy")
+  newplayer.LastLogin = util.GetTime()
   newplayer.Deaths = 0 
   newplayer.Kills = 0 
-  end
-  
+  self.Config[userID] = newplayer
+  config.Save("playerData") --Remove this line for release version
+  end 
 end
 
 --*************************************
