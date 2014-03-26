@@ -14,6 +14,7 @@ function PLUGIN:Init()
 end
 
 function PLUGIN:OnStartCrafting(inv , blueprint, amount, starttime)
+    
     local itemToBeCrafted = blueprint.resultItem.name
     local netuser = rust.NetUserFromNetPlayer( inv.networkViewOwner )
     local inventory = rust.GetInventory(netuser)
@@ -23,12 +24,14 @@ function PLUGIN:OnStartCrafting(inv , blueprint, amount, starttime)
       print(tostring(inv))
       return 
     end
-    local userID = rust.GetUserID(netuser)
+   
+   local userID = rust.GetUserID(netuser)
     local player = Player:GetPlayer( userID )
     
     --Check to see if the item requires a blueprint
     print(player.Name)
-    print(tostring(player.Crafting))
+    --print(tostring(player.Crafting))
+    
     if( player.Crafting:CheckBlueprint(itemToBeCrafted)) then
        --Try to Find the blueprint in player's inventory
        local bp = player.Crafting:GetBlueprint(itemToBeCrafted)

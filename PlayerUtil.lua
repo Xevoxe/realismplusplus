@@ -13,6 +13,10 @@ function PLUGIN:Init()
         if( not api.Exists( "PlayerUtil" )) then print("PlayerUtil needs PlayerMeta")
         end
         Player = plugins.Find("PlayerMeta")
+        
+        if( not api.Exists( "CraftingMeta" )) then print("PlayerUtil needs CraftingMeta")
+        end
+        Crafting = plugins.Find("CraftingMeta")
 
    local b , res = config.Read("playerData")
     self.Config = res or {}
@@ -36,7 +40,7 @@ function PLUGIN:OnUserConnect(netuser)
     --Set Player as a metatable to data
     local loadplayer = self.Config[userID]
     setmetatable(loadplayer , Player:New())
-  --  setmetatable(loadplayer.Crafting , Crafting:New())
+    setmetatable(loadplayer.Crafting , Crafting:New())
     self.Config[userID] = loadplayer
 else
   --does not exist
@@ -49,7 +53,7 @@ else
   newplayer.Deaths = 0 
   newplayer.Kills = 0 
   local crafting = {}
-  --setmetatable( crafting , Crafting:New())
+  setmetatable( crafting , Crafting:New())
   newplayer.Crafting = crafting
   newplayer.Skills = skills
   self.Config[userID] = newplayer
