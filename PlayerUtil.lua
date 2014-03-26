@@ -3,20 +3,19 @@ PLUGIN.Description = " Help script for playerdata"
 PLUGIN.Version = "3.0"
 PLUGIN.Author = "Xevoxe"
 
+local Player = {}
+local Crafting = {}
+
 function PLUGIN:Init()
   
   print("Loading Player Utility Realism++ Version 3.0")
 
-    if not Player then
-        Player = cs.findplugin("PlayerMeta")
-        if not Player then
-          print("PlayerData Utility needs PlayerMeta")
-          return false
+        if( not api.Exists( "PlayerUtil" )) then print("PlayerUtil needs PlayerMeta")
         end
-      end
+        Player = plugins.Find("PlayerMeta")
 
    local b , res = config.Read("playerData")
-  self.Config = res or {}
+    self.Config = res or {}
   if( not b ) then 
    -- self:LoadDefaultConfig()
    if ( res ) then config.Save("playerData") end
@@ -37,6 +36,7 @@ function PLUGIN:OnUserConnect(netuser)
     --Set Player as a metatable to data
     local loadplayer = self.Config[userID]
     setmetatable(loadplayer , Player:New())
+  --  setmetatable(loadplayer.Crafting , Crafting:New())
     self.Config[userID] = loadplayer
 else
   --does not exist
@@ -48,6 +48,10 @@ else
   newplayer.LastLogin = util.GetTime()
   newplayer.Deaths = 0 
   newplayer.Kills = 0 
+  local crafting = {}
+  --setmetatable( crafting , Crafting:New())
+  newplayer.Crafting = crafting
+  newplayer.Skills = skills
   self.Config[userID] = newplayer
   config.Save("playerData") --Remove this line for release version
   end 
@@ -58,7 +62,7 @@ end
 --*************************************
 function PLUGIN:GetPlayerData( userID )
   if(userID ~= nil) then
-  return config[userID]
+  return selfConfig[userID]
 else
   print("Error: FUNC:GetPlayerData - expected userID got nil")
   return
@@ -66,6 +70,6 @@ end
 end
 
 
-
+api.Bind(PLUGIN, "PlayerUtil")
 
 

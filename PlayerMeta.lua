@@ -6,6 +6,10 @@ PLUGIN.Author = "Xevoxe"
 local Player = {}
 Player.__index = Player
 
+function PLUGIN:Init()
+  print("Player Metatable Loading")
+end
+
 function PLUGIN:New()    --send in a new player Table
   return Player
   end
@@ -17,9 +21,10 @@ function PLUGIN:New()    --send in a new player Table
     if(  key == "TimePlayed" )  then rawset( tab, key , value) return end 
     if(  key == "Deaths" )      then rawset( tab, key , value) return end
     if(  key == "Kills" )       then rawset( tab, key , value) return end
+    if(  key == "Skills" )      then rawset( tab, key , value) return end
+    if(  key == "Crafting" )    then rawset( tab, key , value) return end
    print(key.." is not a property of Player") 
  end
  
  
-
-api.Bind(PLUGIN, "PlayerClass")
+api.Bind(PLUGIN, "PlayerMeta")
