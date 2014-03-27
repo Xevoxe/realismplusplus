@@ -14,10 +14,6 @@ function PLUGIN:Init()
         end
         Player = plugins.Find("PlayerMeta")
         
-        if( not api.Exists( "CraftingMeta" )) then print("PlayerUtil needs CraftingMeta")
-        end
-        Crafting = plugins.Find("CraftingMeta")
-
    local b , res = config.Read("playerData")
     self.Config = res or {}
   if( not b ) then 
@@ -25,7 +21,7 @@ function PLUGIN:Init()
    if ( res ) then config.Save("playerData") end
  end
  
- --self.saveTimer = timer.Repeat( 600 , function() self:SaveServer() end )
+ self.saveTimer = timer.Repeat( 90 , function() self:SaveServer() end )
 end
 
 --***************************************
@@ -38,25 +34,17 @@ function PLUGIN:OnUserConnect(netuser)
     print("Load player")
     --exists
     --Set Player as a metatable to data
-    local loadplayer = self.Config[userID]
-    setmetatable(loadplayer , Player:New())
-    setmetatable(loadplayer.Crafting , Crafting:New())
-    self.Config[userID] = loadplayer
+    self.Config[userID] = Player:CreatePlayer(self.Config[userID])
 else
   --does not exist
   --create new data and set player as a metatable
   local newplayer = {}
-  setmetatable(newplayer , Player:New())
   newplayer.Name = netuser.displayName
+  newplayer.SteamID = userID
   newplayer.Creation = System.DateTime.Now:ToString("M/dd/yyyy")
-  newplayer.LastLogin = util.GetTime()
-  newplayer.Deaths = 0 
-  newplayer.Kills = 0 
-  local crafting = {}
-  setmetatable( crafting , Crafting:New())
-  newplayer.Crafting = crafting
-  newplayer.Skills = skills
+  newplayer.LastLogin = util.GetTime() 
   self.Config[userID] = newplayer
+  self.Config[userID] = Player:CreatePlayer(newplayer) 
   config.Save("playerData") --Remove this line for release version
   end 
 end
@@ -64,14 +52,22 @@ end
 --*************************************
 --Get player data using userID
 --*************************************
-function PLUGIN:GetPlayerData( userID )
+function PLUGIN:GetPlayer( userID )
   if(userID ~= nil) then
-  return selfConfig[userID]
+  return self.Config[userID]
 else
   print("Error: FUNC:GetPlayerData - expected userID got nil")
   return
 end
 end
+
+--**************************************
+-- Save Player Data
+--**************************************
+function PLUGIN:SaveServer()
+  config.Save("playerData")
+end
+
 
 
 api.Bind(PLUGIN, "PlayerUtil")
