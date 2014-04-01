@@ -26,6 +26,7 @@ function PLUGIN:LoadDefaultConfig()
   blueprint.Name = "Large Wood Storage"
   blueprint.Blueprint = "Large Wood Storage Blueprint"
   blueprint.Difficulty = 5
+  blueprint.Cost = 2
   self.Config[blueprint.Name] = blueprint
   config.Save("blueprintData")
 end
@@ -169,3 +170,5 @@ function PLUGIN:BlueprintDestroy(difficulty , level )
   end
   return false
 end
+
+  
