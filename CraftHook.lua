@@ -7,7 +7,7 @@ local Player = {}
 
 function PLUGIN:Init()
   
-  print("Loading Crafting and Research Hooks Version 1.0")
+  print("Loading Crafting Hooks Version 1.0")
  if( not api.Exists( "PlayerUtil" )) then print("Crafting needs PlayerUtil")
   end
   Player = plugins.Find("PlayerUtil")
