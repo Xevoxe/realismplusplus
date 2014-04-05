@@ -7,7 +7,7 @@ local cost = { true }
 
 function PLUGIN:Init()
   print("Loading ResearchHook")
-  cost["M4 Blueprint"] = 5
+  cost["M4"] = 5
   
   self:AddChatCommand("blueprint", self.cmdBlueprint )
   

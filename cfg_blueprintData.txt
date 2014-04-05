@@ -1,150 +1,150 @@
 {
-  "M4":{
+  "M4 Blueprint":{
     "Blueprint":"M4 Blueprint",
     "Name":"M4",
     "Difficulty":7
   },
-  "Shotgun":{
+  "Shotgun Blueprint":{
     "Blueprint":"Shotgun Blueprint",
     "Name":"Shotgun",
     "Difficulty":6
   },
-  "MP5A4":{
+  "MP5A4 Blueprint":{
     "Blueprint":"MP5A4 Blueprint",
     "Name":"MP5A4",
     "Difficulty":6
   },
-  "Bolt Action Rifle":{
+  "Bolt Action Rifle Blueprint":{
     "Blueprint":"Bolt Action Rifle Blueprint",
     "Name":"Bolt Action Rifle Blueprint",
     "Difficulty":8
   },
-  "P250":{
+  "P250 Blueprint":{
     "Blueprint":"P250 Blueprint",
     "Name":"P250",
     "Difficulty":3
   },
-  "Explosive Charge":{
+  "Explosive Charge Blueprint":{
     "Blueprint":"Explosive Charge Blueprint",
     "Name":"Explosive Charge",
     "Difficulty":10
   },
-  "Explosives":{
+  "Explosives Blueprint":{
     "Blueprint":"Explosive Blueprint",
     "Name":"M4",
     "Difficulty":9
   },
-  "F1 Grenade":{
+  "F1 Grenade Blueprint":{
     "Blueprint":"F1 Grenade Blueprint",
     "Name":"M4",
     "Difficulty":7
   },
-  "9mm Pistol":{
+  "9mm Pistol Blueprint":{
     "Blueprint":"9mm Pistol Blueprint",
     "Name":"9mm Pistol",
     "Difficulty":2
   },
-  "Revolver":{
+  "Revolver Blueprint":{
     "Blueprint":"Revolver Blueprint",
     "Name":"Revolver",
     "Difficulty":4
   },
-  "556 Ammo":{
+  "556 Ammo Blueprint":{
     "Blueprint":"556 Ammo Blueprint",
     "Name":"556 Ammo",
     "Difficulty":6
   },
-  "Shotgun Shells":{
+  "Shotgun Shells Blueprint":{
     "Blueprint":"Shotgun Shells Blueprint",
     "Name":"Shotgun Shells",
     "Difficulty":6
   },
-  "9mm Ammo":{
+  "9mm Ammo Blueprint":{
     "Blueprint":"9mm Ammo Blueprint",
     "Name":"9mm Ammo",
     "Difficulty":3
   },
-  "Large Medkit":{
+  "Large Medkit Blueprint":{
     "Blueprint":"Large Medkit Blueprint",
     "Name":"Large Medkit",
     "Difficulty":8
   },
-  "Small Medkit":{
+  "Small Medkit Blueprint":{
     "Blueprint":"Small Medkit Blueprint",
     "Name":"Small Medkit",
     "Difficulty":4
   },
-  "Gunpowder":{
+  "Gunpowder Blueprint":{
     "Blueprint":"Gunpowder Blueprint",
     "Name":"Gunpowder",
     "Difficulty":2
   },
-  "Kevlar Vest":{
+  "Kevlar Vest Blueprint":{
     "Blueprint":"Kevlar Vest Blueprint",
     "Name":"Kevlar Vest",
     "Difficulty":10
   },
-  "Kevlar Pants":{
+  "Kevlar Pants Blueprint":{
     "Blueprint":"Kevlar Pants Blueprint",
     "Name":"Kevlar Pants",
     "Difficulty":9
   },
-  "Kevlar Boots":{
+  "Kevlar Boots Blueprint":{
     "Blueprint":"Kevlar Boots Blueprint",
     "Name":"Kevlar Boots",
     "Difficulty":8
   },
-  "Kevlar Helmet":{
+  "Kevlar Helmet Blueprint":{
     "Blueprint":"Kevlar Helmet Blueprint",
     "Name":"Kevlar Helmet",
     "Difficulty":7
   },
-  "Workbench":{
+  "Workbench Blueprint":{
     "Blueprint":"Workbench Blueprint",
     "Name":"Workbench",
     "Difficulty":3
   },
-  "Leather Vest":{
+  "Leather Vest Blueprint":{
     "Blueprint":"Leather Vest Blueprint",
     "Name":"Leather Vest",
     "Difficulty":7
   },
-  "Leather Pants":{
+  "Leather Pants Blueprint":{
     "Blueprint":"Leather Pants Blueprint",
     "Name":"Leather Pants",
     "Difficulty":6
   },
-  "Leather Helmet":{
+  "Leather Helmet Blueprint":{
     "Blueprint":"Leather Helmet Blueprint",
     "Name":"Leather Helmet",
     "Difficulty":5
   },
-  "Leather Boots":{
+  "Leather Boots Blueprint":{
     "Blueprint":"Leather Boots Blueprint",
     "Name":"Leather Boots",
     "Difficulty":4
   },
-  "Repair Bench":{
+  "Repair Bench Blueprint":{
     "Blueprint":"Repair Bench Blueprint",
     "Name":"Repair Bench",
     "Difficulty":6
   },
-  "Holo sight":{
+  "Holo sight BP":{
     "Blueprint":"Holo sight BP",
     "Name":"Holo sight",
     "Difficulty":7
   },
-  "Silencer":{
+  "Silencer BP":{
     "Blueprint":"Silencer BP",
     "Name":"Silencer",
     "Difficulty":6
   },
-  "Flashlight Mod":{
+  "Flashlight Mod BP":{
     "Blueprint":"Flashlight Mod BP",
     "Name":"Flashlight Mod",
     "Difficulty":8
   },
-  "Laser Sight":{
+  "Laser Sight BP":{
     "Blueprint":"Laser Sight BP",
     "Name":"Laser Sight",
     "Difficulty":5

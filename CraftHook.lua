@@ -23,16 +23,15 @@ end
   
 function PLUGIN:LoadDefaultConfig()
   local blueprint = {}
-  blueprint.Name = "Large Wood Storage"
+  blueprint.Name = "Large Wood Storage Blueprint"
   blueprint.Blueprint = "Large Wood Storage Blueprint"
   blueprint.Difficulty = 5
-  blueprint.Cost = 2
   self.Config[blueprint.Name] = blueprint
   config.Save("blueprintData")
 end
 
 function PLUGIN:OnBlueprintUse(blueprint , item)
-  
+print(blueprint.name)
 if(self.Config[blueprint.name]) then --Only do this if using blueprints in the list
   local inventory = item.inventory
   if(inventory) then
@@ -69,7 +68,7 @@ function PLUGIN:OnStartCrafting(inv , blueprint, amount, starttime)
     local itemToBeCrafted = blueprint.resultItem.name
     local netuser = rust.NetUserFromNetPlayer( inv.networkViewOwner )
     local inventory = rust.GetInventory(netuser)
-    
+    print("Inside Crafting")
     if( netuser == nil ) then
       print( "netuser not found - CraftMod" )
       print(tostring(inv))
@@ -78,6 +77,7 @@ function PLUGIN:OnStartCrafting(inv , blueprint, amount, starttime)
    
     local userID = rust.GetUserID(netuser)
     local player = Player:GetPlayer( userID )
+    print(blueprint.name)
     if(self.Config[blueprint.name] ~= nil) then
        --Try to Find the blueprint in player's inventory
        item = inventory:FindItem(blueprint.name)
@@ -85,8 +85,9 @@ function PLUGIN:OnStartCrafting(inv , blueprint, amount, starttime)
        if( item ~= nil ) then
        --Craft Item
         local check = self:CraftBlueprint(blueprint.name , player , netuser )
+        local destroy = nil
         for x = 1 , amount , 1 do
-        local destroy = self:BlueprintDestroy(self.Config[blueprint.name].Difficulty , player.BluePrints[blueprint.name])
+        destroy = self:BlueprintDestroy(self.Config[blueprint.name].Difficulty , player.BluePrints[blueprint.name])
         if(destroy) then
           break
         end        
@@ -114,14 +115,10 @@ function PLUGIN:OnStartCrafting(inv , blueprint, amount, starttime)
 end
 
 function PLUGIN:CraftBlueprint(blueprint , player , netuser)
-  print("Crafting")
   --Get Random Number 0 - 25
   local num = math.random(0 , 25)
-  print(num)
-  print(player.BluePrints[blueprint] - self.Config[blueprint].Difficulty)
   if( player.BluePrints[blueprint] - self.Config[blueprint].Difficulty > num  ) then --Player is successful
-    
-    
+       
     if(self:LevelBlueprint(player.BluePrints[blueprint], self.Config[blueprint].Difficulty , true )) then --Player Levels up
       rust.SendChatToUser( netuser , "You manage to learn something new from crafting this item.")
       player.BluePrints[blueprint] = player.BluePrints[blueprint] + 1
@@ -135,9 +132,10 @@ function PLUGIN:CraftBlueprint(blueprint , player , netuser)
         rust.SendChatToUser( netuser, "You gain a better understanding of crafting this item.")
         player.BluePrints[blueprint] = player.BluePrints[blueprint] + 1
         rust.SendChatToUser( netuser , blueprint.."["..player.BluePrints[blueprint].."]") 
+        return false
       else
       rust.SendChatToUser( netuser, "You are unable to learn anything new from your try.")
-    
+      return false
       end
   end
 end
@@ -165,7 +163,13 @@ function PLUGIN:BlueprintDestroy(difficulty , level )
   local chance = difficulty * 10
   local levelMod = math.ceil(level * 3.8)
   local num = math.random( 0 , chance )
-  if( num > levelMod or num < math.ceil((chance * .05))) then
+  local autoDestroy = math.random( 0 , 100 )
+  print(num)
+  if(num > levelMod) then 
+    print("Blueprint Destroyed")
+  end
+  
+  if( num > levelMod or autoDestroy < math.ceil((chance * .10))) then
     return true
   end
   return false
