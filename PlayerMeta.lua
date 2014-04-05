@@ -28,6 +28,8 @@ function PLUGIN:CreatePlayer( playerData)
   newplayer.Creation = playerData.Creation or "12/1/11"
   newplayer.TimePlayed = playerData.TimePlayed or 0
   newplayer.BluePrints = playerData.BluePrints or {}
+  newplayer.Friends = playerData.Friends or {}
+  newplayer.Teleport = playerData.Teleport or 0
   return newplayer
 end
 
@@ -53,6 +55,28 @@ function Player:GetBlueprintLevel ( item )
   return self.BluePrints[item]
 end
 
+function Player:AddFriend( steamID )
+  local b , res = self.Friends[steamID]
+  if(b) then 
+    return false
+  else 
+    self.Friends[steamID] = steamID 
+    return true
+    end
+end
+
+function Player:RemoveFriend( steamID )
+  if(self.Friends[steamID] ~= nil ) then
+    self.Friends[steamID] = nil
+    return true --Friend Removed
+  else
+    return false --Friend does not exist
+  end
+end
+
+
+
+
 
  Player.__newindex = function ( tab, key , value )
     if(  key == "Name" )        then rawset( tab, key, value ) return end
@@ -63,7 +87,9 @@ end
     if(  key == "Kills" )       then rawset( tab, key , value) return end
     if(  key == "Skills" )      then rawset( tab, key , value) return end
     if(  key == "BluePrints" )  then rawset( tab, key , value) return end
-     if( key == "SteamID" )     then rawset( tab, key , value) return end
+    if(  key == "SteamID" )     then rawset( tab, key , value) return end
+    if(  key == "Friends" )     then rawset( tab, key , value) return end
+    if(  key == "Teleport" )    then rawset( tab, key , value) return end
    print(key.." is not a property of Player") 
  end
  

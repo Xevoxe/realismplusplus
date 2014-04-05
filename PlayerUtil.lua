@@ -68,7 +68,22 @@ function PLUGIN:SaveServer()
   config.Save("playerData")
 end
 
-
+--**************************************
+-- Find Netuser of player with displayname
+--**************************************
+function PLUGIN:FindPlayerNetuser ( name )
+ local t , member = rust.FindNetUsersByName( util.QuoteSafe(name))
+    if (not t) then
+        if (targetuser == 0) then
+          rust.Notice( member, "No players found with that name!" )
+				return
+			  else
+				rust.Notice( member, "Multiple players found with that name!" )
+				return
+			  end
+		end 
+    return member
+end  
 
 api.Bind(PLUGIN, "PlayerUtil")
 
