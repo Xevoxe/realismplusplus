@@ -15,7 +15,6 @@ end
 
 
 function PLUGIN:OnResearchItem( researchtoolitem, item )
-  print("Test")
   if( item.datablock.name ~= "Research Kit 1" ) then
     local playerinv = researchtoolitem.inventory
 		if (playerinv and item.inventory == playerinv) then

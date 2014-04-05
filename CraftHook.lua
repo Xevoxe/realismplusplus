@@ -68,7 +68,6 @@ function PLUGIN:OnStartCrafting(inv , blueprint, amount, starttime)
     local itemToBeCrafted = blueprint.resultItem.name
     local netuser = rust.NetUserFromNetPlayer( inv.networkViewOwner )
     local inventory = rust.GetInventory(netuser)
-    print("Inside Crafting")
     if( netuser == nil ) then
       print( "netuser not found - CraftMod" )
       print(tostring(inv))
@@ -164,9 +163,7 @@ function PLUGIN:BlueprintDestroy(difficulty , level )
   local levelMod = math.ceil(level * 3.8)
   local num = math.random( 0 , chance )
   local autoDestroy = math.random( 0 , 100 )
-  print(num)
   if(num > levelMod) then 
-    print("Blueprint Destroyed")
   end
   
   if( num > levelMod or autoDestroy < math.ceil((chance * .10))) then
