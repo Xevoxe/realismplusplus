@@ -122,18 +122,112 @@ function PLUGIN:cmdBuy( netuser , cmd , args)
   if(args[1] ~= nil) then --Item has been chosen
     args[1] = tonumber(args[1])
     if(args[1]) then --Item is a number
-      local item = self.Config[player.VisitStore]:GetItem(args[1])
+     if(tonumber(args[2])) then
+       --Buy Item
+       local cost = store:Price(args[1])
+       if(cost) then --Item Exists
+         self:BuyItem(args[1], cost , tonumber(args[2]) , netuser , store )
+       else
+         rust.SendChatToUser ( netuser , "That item cannot be found in this store.")
+       end
+       
+     else
+     rust.SendChatToUser( netuser , "Must enter in a amount that is a valid number." )
+     end
+     
     else
       rust.SendChatToUser( netuser , "ItemNum must be a number.")
     end
   else
-    --List Items for sell here
-    
+    --List Items for sell here 
     store:ForSale(netuser)
     rust.SendChatToUser( netuser , "Syntax: /buy [itemnum] [amount]")
     rust.SendChatToUser( netuser , "ItemNum cooresponds to the item number in store.")
   end
   return
+end
+
+--********************************************
+--Buy Item from store
+--********************************************
+function PLUGIN:BuyItem( itemNum, price , amount , netuser , store)
+  local inv = netuser.playerClient.rootControllable.idMain:GetComponent( "Inventory" )
+  if(not inv) then -- Inventory not found
+    print("ERROR Inventory not found Store Line 156")
+  end
+  
+  local currency = self:GetAllCurrency(inv)
+
+  if(currency) then 
+    local cost = 0
+
+    if(currency >= price) then --You have enough sulfur to buy at least 1 item.
+      --Remove items from the store
+       if(amount > (currency/price)) then --Adjust amount to number the player can afford
+       amount = math.floor(currency/price)
+       end
+      
+      
+      local leftover = store:RemoveItem(itemNum , amount) 
+      if(leftover > 0) then --Could not purchase all items
+      amount = amount - leftover
+      cost = price * amount
+      else
+      cost = price * amount
+      end
+    
+    currency = currency - cost
+    print(currency)
+     --Put Items into inventory
+                    local datablock = rust.GetDatablockByName( store:GetItemName(itemNum) )
+                    local pref = rust.InventorySlotPreference( InventorySlotKind.Default , false , InventorySlotKindFlags.Belt )
+                    local arr = util.ArrayFromTable( System.Object, { datablock , amount, pref } )
+                    inv:AddItemAmount( datablock , amount , pref )
+                    --Put Change back into inventory
+                    if(currency ~= 0 ) then
+                     datablock = rust.GetDatablockByName( "Sulfur" )
+                     pref = rust.InventorySlotPreference( InventorySlotKind.Default, false, InventorySlotKindFlags.Belt )
+                     arr = util.ArrayFromTable( System.Object, { datablock, currency, pref } )
+                     inv:AddItemAmount( datablock, currency, pref )
+                    end
+                  
+                    rust.InventoryNotice( netuser , tostring(amount).." x "..datablock.name )
+                    config.Save("storeData")
+      
+    else
+      rust.SendChatToUser( netuser , "You cannot afford to purchase that item.")
+      local datablock = rust.GetDatablockByName( "Sulfur" )
+      local pref = rust.InventorySlotPreference( InventorySlotKind.Default, false, InventorySlotKindFlags.Belt )
+      local arr = util.ArrayFromTable( System.Object, { datablock, currency, pref } )
+      inv:AddItemAmount( datablock, currency, pref )
+    end
+    
+    
+  else
+    rust.SendChatToUser( netuser , "You have no sulfur to buy with.")
+  end
+  
+  
+  
+end
+
+--********************************************
+--Returns all the currency a player has
+--********************************************
+function PLUGIN:GetAllCurrency(inv)
+  local currency = inv:FindItem("Sulfur")  --Sulfur is the current currency
+  if(currency) then 
+    local wallet = 0 
+    while(currency) do --collect all currency
+      wallet = currency.Uses + wallet
+      inv:RemoveItem(currency)
+      currency = inv:FindItem("Sulfur")
+    end
+    return wallet --Return all currency on player   
+  else
+    return nil --No Currency Found 
+  end
+  
 end
 
 
