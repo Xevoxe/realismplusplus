@@ -50,7 +50,6 @@ if(args[1] ~= nil ) then
   if(args[1] == "pending") then
     rust.SendChatToUser( netuser , "Pending Friend Invites:" )
     for i = 1 , #pending , 1 do 
-      print(pending)
       if(pending[i].Invitee == userID) then
         rust.SendChatToUser( netuser , pending[i].InvitorName)      
     end
