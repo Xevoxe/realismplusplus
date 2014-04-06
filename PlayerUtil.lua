@@ -31,7 +31,6 @@ function PLUGIN:OnUserConnect(netuser)
   local userID = rust.GetUserID(netuser)
   --Check if player table already exists
   if(self.Config[userID]) then
-    print("Load player")
     --exists
     --Set Player as a metatable to data
     self.Config[userID] = Player:CreatePlayer(self.Config[userID])
