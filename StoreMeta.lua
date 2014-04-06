@@ -77,30 +77,29 @@ end
  --****************************************************
  --Remove a Item from the store Item Contains : Name and Amount
  --****************************************************
- function Store:RemoveItem( item )
+ function Store:RemoveItem( item , amount )
    
    --Find the Item
-   for i = 1 , #self.Sell , 1 do
-     if( self.Sell[i].Name == item.Name ) then --Item found in list
+   
+     if(self.Sell[item]) then --Item found in list
        --Compare and Adjust Remove Amount
-       if(item.Amount > self.Sell[i].Amount) then --There are not that many items in this store 
-       local difference = math.abs(self.Sell[i].Amount - item.Amount)
-       local amount = item.Amount - difference
+       if(amount > self.Sell[item].Amount) then --There are not that many items in this store 
+       local difference = math.abs(self.Sell[item].Amount - amount)
+       local newAmount = amount - difference
        --Remove Items from store
-       self.Sell[i] = self.Sell[i].Amount - amount
-       self.CurItems = self.CurItems - amount
+       self.Sell[item].Amount = self.Sell[item].Amount - newAmount
+       self.CurItems = self.CurItems - newAmount
        return difference --Number of Items not Removed
       
       else
        --There are enough items in the store
-       self.Sell[i] = self.Sell[i].Amount - item.Amount 
-       self.CurItems = self.CurItems - item.Amount
-       if(self.Sell[i].Amount == 0 ) then --No more items are for sell
-         table.remove(self.Sell , i ) --Remove Item from store
+       self.Sell[item].Amount = self.Sell[item].Amount - amount 
+       self.CurItems = self.CurItems - amount
+       if(self.Sell[item].Amount == 0 ) then --No more items are for sell
+         table.remove(self.Sell , item ) --Remove Item from store
        end
       return 0 --All Items removed
-      end     
-    end
+    end  
   end
   return nil --Item not found in list
  end
@@ -131,17 +130,38 @@ end
 end
 
 --********************************************************
+--Get Price of Item
+--********************************************************
+function Store:Price(item)
+  if(self.Sell[item] ~= nil) then
+  return self.Sell[item].Price
+else 
+  return false --Item does not exist
+end
+end
+
+
+
+--********************************************************
 --Print For Sell Contents Takes a netuser
 --********************************************************
 function Store:ForSale(netuser)
-    local string = string.format("%10s     %10s     %10s     %-s", "[NUM]","[PRICE]", "[AMOUNT]", "[ITEM]"  )
+    local string = string.format("%10s     %10s     %20s     %-s", "[NUM]","[PRICE]", "[AMOUNT]", "[ITEM]"  )
+    rust.SendChatToUser( netuser , "Welcome to "..self.Name.."!")
     rust.SendChatToUser( netuser , string)  
   for i = 1 , #self.Sell , 1 do
-    string = string.format("%-10s     %10s     %10s     %-s", tostring(i) ,tostring(self.Sell[i].Price), tostring(self.Sell[i].Amount), self.Sell[i].Name)
+    string = string.format("%-10s     %10s     %20s     %-s", tostring(i) ,tostring(self.Sell[i].Price), tostring(self.Sell[i].Amount), self.Sell[i].Name)
     rust.SendChatToUser( netuser , string )
   end
-  
 end
+
+--*******************************************************
+--Get Name of the Item
+--*******************************************************
+function Store:GetItemName( itemNum )
+  return self.Sell[itemNum].Name
+end
+
 
 
  api.Bind(PLUGIN, "StoreMeta")
