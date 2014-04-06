@@ -30,6 +30,7 @@ function PLUGIN:CreatePlayer( playerData)
   newplayer.BluePrints = playerData.BluePrints or {}
   newplayer.Friends = playerData.Friends or {}
   newplayer.Teleport = playerData.Teleport or 0
+  newplayer.VisitStore = playerData.VisitStore or 1  
   return newplayer
 end
 
@@ -90,6 +91,7 @@ end
     if(  key == "SteamID" )     then rawset( tab, key , value) return end
     if(  key == "Friends" )     then rawset( tab, key , value) return end
     if(  key == "Teleport" )    then rawset( tab, key , value) return end
+    if(  key == "VisitStore" )  then rawset( tab, key , value) return end
    print(key.." is not a property of Player") 
  end
  
