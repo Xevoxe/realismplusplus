@@ -130,5 +130,19 @@ end
  end
 end
 
+--********************************************************
+--Print For Sell Contents Takes a netuser
+--********************************************************
+function Store:ForSale(netuser)
+    local string = string.format("%10s     %10s     %10s     %-s", "[NUM]","[PRICE]", "[AMOUNT]", "[ITEM]"  )
+    rust.SendChatToUser( netuser , string)  
+  for i = 1 , #self.Sell , 1 do
+    string = string.format("%-10s     %10s     %10s     %-s", tostring(i) ,tostring(self.Sell[i].Price), tostring(self.Sell[i].Amount), self.Sell[i].Name)
+    rust.SendChatToUser( netuser , string )
+  end
+  
+end
+
+
  api.Bind(PLUGIN, "StoreMeta")
  

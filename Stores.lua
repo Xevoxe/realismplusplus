@@ -32,12 +32,10 @@ function PLUGIN:Init()
    self:LoadDefaultConfig()  --Server Store
    if ( res ) then config.Save("storeData") end  --Contains all player made stores   
  end
+    self:LoadStores()
     self:AddChatCommand( "store" , self.cmdStore )
+    self:AddChatCommand( "buy" , self.cmdBuy )
 end
-
-
-
-
 
 
 --********************************************
@@ -93,7 +91,7 @@ args[1] = string.lower(args[1])
         if(tonumber(args[2])) then --Is a number
           if(self.Config[tonumber(args[2])] ~= nil) then --Store Exists
             rust.SendChatToUser( netuser , "You are now shopping at "..self.Config[tonumber(args[2])].Name)
-            player.VisitStore = args[2]
+            player.VisitStore = tonumber(args[2])
           else
             rust.SendChatToUser( netuser , "That number is not associated with a store.")
           end
@@ -113,6 +111,31 @@ rust.SendChatToUser( netuser , "Syntax /Store [command]")
 rust.SendChatToUser( netuser , "Commands: list , set")
 end
 end
+
+--********************************************
+--/buy [itemnum] [amount] Will buy specific item from current selected store.
+--********************************************
+function PLUGIN:cmdBuy( netuser , cmd , args)
+  local userID = rust.GetUserID(netuser)
+  local player = PlayerUtil:GetPlayer(userID)
+  local store = self.Config[player.VisitStore]
+  if(args[1] ~= nil) then --Item has been chosen
+    args[1] = tonumber(args[1])
+    if(args[1]) then --Item is a number
+      local item = self.Config[player.VisitStore]:GetItem(args[1])
+    else
+      rust.SendChatToUser( netuser , "ItemNum must be a number.")
+    end
+  else
+    --List Items for sell here
+    
+    store:ForSale(netuser)
+    rust.SendChatToUser( netuser , "Syntax: /buy [itemnum] [amount]")
+    rust.SendChatToUser( netuser , "ItemNum cooresponds to the item number in store.")
+  end
+  return
+end
+
 
 --********************************************
 --Load All Stores 
