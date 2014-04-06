@@ -30,11 +30,89 @@ function PLUGIN:Init()
    self.Config = res or {}
    if( not b ) then 
    self:LoadDefaultConfig()  --Server Store
-   if ( res ) then config.Save("storeData") end  --Contains all player made stores     
+   if ( res ) then config.Save("storeData") end  --Contains all player made stores   
  end
+    self:AddChatCommand( "store" , self.cmdStore )
 end
 
 
+
+
+
+
+--********************************************
+--/Store Commands dealing with stores
+--********************************************
+function PLUGIN:cmdStore( netuser, cmd, args )
+  local userID = rust.GetUserID(netuser)
+  local player = PlayerUtil:GetPlayer(userID)
+if( args[1] ~= nil ) then
+args[1] = string.lower(args[1])  
+--********************************************
+--/list Lists all the available stores
+--********************************************
+    if(args[1] == "list") then
+      if(args[2] ~= nil) then --List pages in case alot of stores
+        if(tonumber(args[2])) then 
+          --Output args[2] Page of stores
+          --Check if page exists
+          if(math.ceil(#self.Config / 10 ) < args[2]) then --Page Exists
+            for i = 1+(10*args[2]-10) , 10*args[2] , 1 do
+                if(self.Config ~= nil) then
+                  rust.SendChatToUser ( netuser , "["..i.."]".." "..self.Config[i].Name..": "..self.Config[i].Desc )
+                else
+                  break --No More Stores to list
+                end
+            end
+              rust.SendChatToUser ( netuser , "Page: "..args[2].." of "..math.ceil(#self.Config / 10))
+              rust.SendChatToUser ( netuser , "/store list [pagenum] -To see more stores if available.")
+        else
+          rust.SendChatToUser ( netuser, "That page does not exist.")
+          end
+        end
+      else
+      --Output first page of stores
+      for i = 1 , 10 , 1 do
+        if(self.Config[i] ~= nil) then
+          rust.SendChatToUser ( netuser , "[  "..i.."  ]".." "..self.Config[i].Name..":      \""..self.Config[i].Desc.."\"" )
+        else
+          break --No More Stores to list
+        end
+      end
+        rust.SendChatToUser ( netuser , "Page: 1 of "..math.ceil(#self.Config / 10))
+        rust.SendChatToUser ( netuser , "/store list [pagenum] -To see more stores if available.")
+    end  
+      
+    return
+  end
+--********************************************
+--/set Sets a active store
+--********************************************
+    if(args[1] == "set" ) then
+      if(args[2] ~= nil) then
+        if(tonumber(args[2])) then --Is a number
+          if(self.Config[tonumber(args[2])] ~= nil) then --Store Exists
+            rust.SendChatToUser( netuser , "You are now shopping at "..self.Config[tonumber(args[2])].Name)
+            player.VisitStore = args[2]
+          else
+            rust.SendChatToUser( netuser , "That number is not associated with a store.")
+          end
+        else
+        rust.SendChatToUser( netuser , "Syntax:/store set [storenum]")
+        rust.SendChatToUser( netuser , "Second argument must be a number.")
+        end
+      else
+        rust.SendChatToUser( netuser , "Syntax: /store set [storenum]")
+        rust.SendChatToUser( netuser , "Set active store by picking a store number.")
+      end
+    return
+    end
+  
+else
+rust.SendChatToUser( netuser , "Syntax /Store [command]")
+rust.SendChatToUser( netuser , "Commands: list , set")
+end
+end
 
 --********************************************
 --Load All Stores 
