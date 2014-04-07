@@ -125,6 +125,8 @@ end
        if(invitor == otherUserID) then --This person has accepted the others friend request
          player:AddFriend(otherUserID) --Add other person to friends list
          otherPerson:AddFriend(userID) --Add the person who accepted to friends list
+         rust.SendChatToUser( netuser , "You have accepted "..otherPlayer.displayName.."'s friend invite.")
+         rust.SendChatToUser( otherPerson , netuser.displayName.." has accepted your friend invite.")
          table.remove(pending , i)
          return
        end
