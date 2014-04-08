@@ -31,6 +31,9 @@ function PLUGIN:CreatePlayer( playerData)
   newplayer.Friends = playerData.Friends or {}
   newplayer.Teleport = playerData.Teleport or 0
   newplayer.VisitStore = playerData.VisitStore or 1  
+  newplayer.Vault = playerData.Vault or 0
+  newplayer.Stores = playerData.Stores or 0
+  newplayer.SupporterFlags = playerData.SupporterFlags or {}
   return newplayer
 end
 
@@ -75,8 +78,41 @@ function Player:RemoveFriend( steamID )
   end
 end
 
+function Player:GetSupporterFlag( flag )
+  local b , res = self.SupporterFlags[flag]
+  if(b) then 
+    return self.SupporterFlags[flag]
+  else return false end
+end
 
 
+function Player:SetSupporterFlag( table )
+  self.SupporterFlags[table.Name] = table
+end
+
+function Player:GetSupporterAttrib( flag , attrib )
+  local b , res = self.SupporterFlags[flag]
+  if(b) then
+  return self.SupporterFlags[flag][attrib]
+  else return false end
+end
+
+function Player:SetSupporterAttrib( flag , attrib , value )
+  local b , res = self.SupporterFlags[flag]
+  if(b) then
+  self.SupporterFlags[flag][attrib] = value
+  else return false end
+end
+
+ function Player:Killed()
+   self.Deaths = self.Deaths + 1
+   return
+ end
+ 
+ function Player:Murdered()
+   self.Kills = self.Kills + 1
+   return
+ end
 
 
  Player.__newindex = function ( tab, key , value )
@@ -92,6 +128,9 @@ end
     if(  key == "Friends" )     then rawset( tab, key , value) return end
     if(  key == "Teleport" )    then rawset( tab, key , value) return end
     if(  key == "VisitStore" )  then rawset( tab, key , value) return end
+    if(  key == "Vault")        then rawset( tab, key , value) return end
+    if(  key == "Stores")       then rawset( tab, key , value) return end
+    if(  key == "SupporterFlags") then rawset( tab, key , value) return end
    print(key.." is not a property of Player") 
  end
  

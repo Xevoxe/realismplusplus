@@ -3,7 +3,7 @@ PLUGIN.Description = " Friends related code. "
 PLUGIN.Version = "1.0"
 PLUGIN.Author = "Xevoxe"
 
-local TELEPORTCD = 21600 --6 Hours
+local TELEPORTCD = 7200 --6 Hours
 local pending = {}
 function PLUGIN:Init()
   print("Loading Who Mod")

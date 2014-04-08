@@ -6,8 +6,18 @@ PLUGIN.Author = "Xevoxe"
 local Store = {}
 Store.__index = Store
 
+local VAULTSIZE = nil
+local ITEMSIZE =  nil
+local SLOTSIZE =  nil
+local TAX = nil
+
 function PLUGIN:Init()
   print("Store Metatable Loading")
+  
+  VAULTSIZE = 1000
+  ITEMSIZE  = 50
+  SLOTSIZE  = 3
+  TAX = .08
 end
 
 function Store.New()    --send in a new player Table
@@ -22,9 +32,11 @@ function PLUGIN:CreateStore( store )
   newStore.Name = store.Name or "Generic Store"
   newStore.Owner = store.Owner or 0
   newStore.Sell = store.Sell or {} -- Holds the items to sell
-  newStore.MaxItems = store.MaxItems or 50
   newStore.CurItems = store.CurItems or 0
   newStore.Desc = store.Desc or "Generic Store"
+  newStore.Vault = store.Vault or 0
+  newStore.Tier = store.Tier or 1
+  newStore.Last = store.Last or util.GetTime()
   return newStore
 end
 
@@ -32,45 +44,81 @@ end
     if(  key == "Name" )      then rawset( tab, key, value ) return end
     if(  key == "Owner" )     then rawset( tab, key , value) return end 
     if(  key == "Sell" )      then rawset( tab, key , value) return end 
-    if(  key == "MaxItems")   then rawset( tab, key , value) return end
     if(  key == "CurItems")   then rawset( tab, key , value) return end
     if(  key == "Desc")       then rawset( tab, key , value) return end
+    if(  key == "Vault")      then rawset( tab, key , value) return end
+    if(  key == "Tier")       then rawset( tab, key , value) return end
+    if(  key == "Last")       then rawset( tab, key , value) return end
     print(key.." is not a property of Store") 
  end
+ 
+ 
+ --***************************************************
+ --Adds currency to vault returns what cannot fit
+ --***************************************************
+ function Store:AddVault( currency )
+   --Adjust currency so it will fit in vault
+   local change = (self.Tier*VAULTSIZE)-(self.Vault + currency)
+   
+   if(change >= 0 ) then --Everything fit into the vault
+     self.Vault = self.Vault + currency
+     return 0
+ else
+   currency = currency - math.abs(change)
+   self.Vault = self.Vault + currency
+   change = math.abs(change)
+   return change --Return what did not fit into the vault
+   end
+ end
+ 
+ 
+ 
  
  --***************************************************
  -- Adds a Item into the store Item Contains : Name Amount and Price
  --***************************************************
  
  function Store:AddItem ( item )
+   local maxItems = self.Tier * ITEMSIZE
+   local maxSlot  = self.Tier * SLOTSIZE
+   --Check if store has room based on tier
+ 
    --Adjust the amount to fit into store
    local difference = 0
-   local amount = 0
-   print(item.Name)
-   if(item.Amount + self.CurItems > self.MaxItems) then
-   difference = math.abs(self.MaxItems - (item.Amount + self.CurItems))
-   amount = item.Amount - difference
+   local amount = item.Amount
+   if(amount + self.CurItems > maxItems) then
+   difference = math.abs(maxItems - (item.Amount + self.CurItems))
+   amount = amount - difference
    end
    --If the adjusted amount is still too much then do nothing  
-   if(amount <= self.MaxItems) then
+   if((amount+self.CurItems) <= maxItems) then
      --Check to see if the item is already in the store.
      for i = 1 , #self.Sell , 1 do 
       if(self.Sell[i].Name == item.Name) then --Item is in store already
         self.Sell[i].Amount = self.Sell[i].Amount + amount
+        self.Sell[i].Price = item.Price
         self.CurItems = self.CurItems + amount
+        self.Vault = self.Vault - (amount * item.Price * TAX)
         return difference --Item added 
      end
     end   
      --Item is does not exist in store
+     --check if slots are available
+     if(#self.Sell+1 <= maxSlot) then --You can add another slot
      local index = #self.Sell + 1
      self.Sell[index] = {}
      self.Sell[index].Name = item.Name
-     self.Sell[index].Amount = item.Amount
+     self.Sell[index].Amount = amount
      self.Sell[index].Price = item.Price
-     self.CurItems = self.CurItems + item.Amount
-     return 0 --Item Added 
+     self.CurItems = self.CurItems + amount
+     self.Vault = self.Vault - (amount * item.Price*TAX)
+     return difference --Item Added 
+   else
+     return nil
+   end
+   
      else
-   return difference --Item cannot be added
+   return nil --Item cannot be added
  end
  end
  
@@ -89,6 +137,9 @@ end
        --Remove Items from store
        self.Sell[item].Amount = self.Sell[item].Amount - newAmount
        self.CurItems = self.CurItems - newAmount
+       if(self.Sell[item].Amount == 0 ) then --No more items are for sell
+         table.remove(self.Sell , item ) --Remove Item from store
+       end
        return difference --Number of Items not Removed
       
       else
@@ -107,15 +158,26 @@ end
  --******************************************************
  --Set Price of a Item Item Contains Name and Price
  --*****************************************************
- function Store:SetPrice( item )
-   for i = 1 , #self.Sell , 1 do
-     if(item.Name == self.Sell[i].Name) then --Item is in store
-       self.Sell[i].Price = item.Price
+ function Store:SetPrice( item , price)
+     if(self.Sell[item]~= nil) then --Item is in store
+       self.Sell[item].Price = price
        return true
-      end
       end
    return false --Item not found in list
  end
+ 
+ --*******************************************************
+ --Set Name of store
+ --*******************************************************
+ function Store:SetName( name )
+   if(string.len(name) <= 30 ) then --Name is valid
+     self.Name = name
+     return true
+   else
+     return false 
+   end
+ end
+ 
  
  --*******************************************************
  --Set Description of store
@@ -162,6 +224,17 @@ function Store:GetItemName( itemNum )
   return self.Sell[itemNum].Name
 end
 
+--*******************************************************
+--Check Max Vault
+--*******************************************************
+function Store:CheckVault(amount)
+  local amount = self.Vault + amount
+  if(amount > (self.Tier * VAULTSIZE) ) then --Amount wont fit
+    return false
+  else
+    return true
+  end
+end
 
 
  api.Bind(PLUGIN, "StoreMeta")

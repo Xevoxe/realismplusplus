@@ -14,6 +14,8 @@ function PLUGIN:Init()
         end
         Player = plugins.Find("PlayerMeta")
         
+        
+        
    local b , res = config.Read("playerData")
     self.Config = res or {}
   if( not b ) then 
@@ -22,7 +24,18 @@ function PLUGIN:Init()
  end
  
  self.saveTimer = timer.Repeat( 90 , function() self:SaveServer() end )
+ self:AddChatCommand( "saveall" , self.cmdSaveAll )
 end
+
+--***************************************
+--Saves all realism player data
+--***************************************
+function PLUGIN:cmdSaveAll()
+  self:SaveServer()
+end
+
+
+
 
 --***************************************
 --On Player Connect HOOK
@@ -64,7 +77,7 @@ end
 -- Save Player Data
 --**************************************
 function PLUGIN:SaveServer()
-  config.Save("playerData")
+  config.Save("playerData")  
 end
 
 --**************************************
@@ -83,6 +96,33 @@ function PLUGIN:FindPlayerNetuser ( name )
 		end 
     return member
 end  
+
+--***************************************
+--Add excess vault on player on respawn
+--***************************************
+function PLUGIN:OnSpawnPlayer( playerclient , usecamp , avatar )
+  
+  local netuser = playerclient.netuser
+  timer.NextFrame( function() self:SpawnVault( netuser ) end )
+
+end
+
+function PLUGIN:SpawnVault(netuser)
+  
+  local userID = rust.GetUserID(netuser)
+  local player = self:GetPlayer(userID)
+  
+  if(player.Vault > 0 ) then
+  print(player.Vault)
+  local inv = netuser.playerClient.rootControllable.idMain:GetComponent( "Inventory" )
+  local datablock = rust.GetDatablockByName( "Sulfur" )
+  local pref = rust.InventorySlotPreference( InventorySlotKind.Default, false, InventorySlotKindFlags.Belt )
+  local arr = util.ArrayFromTable( System.Object, { datablock, player.Vault, pref } )
+  inv:AddItemAmount( datablock, player.Vault , pref )
+  player.Vault = 0
+  end
+end
+
 
 api.Bind(PLUGIN, "PlayerUtil")
 
