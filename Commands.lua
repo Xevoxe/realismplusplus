@@ -13,6 +13,7 @@ function PLUGIN:Init()
   self:AddChatCommand("support" , self.cmdSupporter )
   self:AddChatCommand("remover" , self.cmdRemover )
   self:AddChatCommand("location" , self.cmdLocation)
+  self:AddChatCommand("stats" , self.cmdStats)
   
   
 end
@@ -161,4 +162,13 @@ function PLUGIN:GetPlayer( netuser )
   return player
 end
 
-
+function PLUGIN:cmdStats(netuser, cmd , args )
+  local steamID = rust.GetUserID(netuser)
+  local player = PlayerUtil:GetPlayer(steamID)
+  
+  rust.SendChatToUser ( netuser , "Creation Date ["..player.Creation.."]")
+  rust.SendChatToUser ( netuser , "Kills  ["..player.Kills.."]" )
+  rust.SendChatToUser ( netuser , "Deaths ["..player.Deaths.."]")
+  local kdr = player.Kills / player.Deaths
+  rust.SendChatToUser ( netuser , "KDR    ["..kdr.."]")
+end
